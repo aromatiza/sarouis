@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f6f4ec">
+  <meta name="description" content="Quiz professionnel — Journée mondiale de l'alimentation.">
+  <title>World Food Day — Quiz professionnel</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <div class="site-shell">
+    <header class="topbar">
+      <a class="brand" href="#" aria-label="World Food Day accueil">
+        <span class="brand-mark" aria-hidden="true">✳</span>
+        <span>FOOD<span class="brand-light"> / DAY</span></span>
+      </a>
+      <span class="topbar-note"><span class="status-dot"></span> Quiz · 10 questions</span>
+    </header>
+
+    <main>
+      <section id="intro-screen" class="hero screen">
+        <div class="hero-copy">
+          <p class="eyebrow"><span class="eyebrow-line"></span> JOURNÉE MONDIALE DE L’ALIMENTATION</p>
+          <h1>Chaque choix<br>nourrit <em>l’avenir.</em></h1>
+          <p class="hero-description">Testez vos connaissances sur l’alimentation, la sécurité alimentaire et les enjeux d’un système alimentaire plus durable.</p>
+          <div class="hero-meta">
+            <div><span class="meta-number">10</span><span class="meta-label">Questions</span></div>
+            <div class="meta-divider"></div>
+            <div><span class="meta-number">5–7</span><span class="meta-label">Minutes</span></div>
+            <div class="meta-divider"></div>
+            <div><span class="meta-number">16/10</span><span class="meta-label">Journée mondiale</span></div>
+          </div>
+          <button id="start-btn" class="button button-primary">Je participe <span aria-hidden="true">↗</span></button>
+          <p class="microcopy">Inscription rapide, puis 10 questions. Votre résultat et la correction s’affichent à la fin.</p>
+        </div>
+        <div class="hero-art" role="img" aria-label="Composition de légumes frais et de céréales">
+          <div class="art-label art-label-top">MIEUX MANGER</div>
+          <div class="art-orbit orbit-one"></div>
+          <div class="art-orbit orbit-two"></div>
+          <div class="produce produce-green"></div>
+          <div class="produce produce-orange"></div>
+          <div class="produce produce-cream"></div>
+          <div class="leaf leaf-one"></div>
+          <div class="leaf leaf-two"></div>
+          <div class="leaf leaf-three"></div>
+          <div class="art-caption"><span>FAO · 16 octobre</span><span>Le savoir en action</span></div>
+        </div>
+      </section>
+
+      <section id="register-screen" class="identity-screen screen hidden">
+        <div class="identity-card">
+          <p class="eyebrow"><span class="eyebrow-line"></span> INSCRIPTION</p>
+          <h2>Avant de commencer,<br><em>présentez-vous.</em></h2>
+          <p class="identity-description">Ces informations permettent d’associer votre résultat à votre participation. Tous les champs sont obligatoires.</p>
+          <form id="register-form" novalidate>
+            <div class="field-row">
+              <div class="field">
+                <label for="first-name">Prénom</label>
+                <input id="first-name" name="first-name" type="text" autocomplete="given-name" maxlength="60" required placeholder="Sara">
+              </div>
+              <div class="field">
+                <label for="last-name">Nom</label>
+                <input id="last-name" name="last-name" type="text" autocomplete="family-name" maxlength="60" required placeholder="Amrani">
+              </div>
+            </div>
+            <div class="field">
+              <label for="email">Adresse e-mail</label>
+              <input id="email" name="email" type="email" autocomplete="email" inputmode="email" maxlength="254" required placeholder="vous@exemple.com">
+            </div>
+            <div class="field">
+              <label for="phone">Numéro de téléphone</label>
+              <input id="phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" maxlength="20" required placeholder="+212 6 12 34 56 78">
+            </div>
+            <label class="consent" for="consent">
+              <input id="consent" name="consent" type="checkbox" required>
+              <span>J’accepte que mon nom, mon e-mail, mon téléphone et mon résultat soient enregistrés pour l’organisation de ce quiz.</span>
+            </label>
+            <button class="button button-primary button-wide" type="submit">Commencer le quiz <span aria-hidden="true">↗</span></button>
+            <p id="register-error" class="form-error" role="alert"></p>
+          </form>
+        </div>
+      </section>
+
+      <section id="quiz-screen" class="quiz-screen screen hidden" aria-live="polite">
+        <div class="quiz-heading">
+          <p class="eyebrow"><span class="eyebrow-line"></span> VOTRE PARCOURS</p>
+          <p class="quiz-counter"><span id="current-number">01</span><span class="counter-slash"> / </span><span id="total-number">10</span></p>
+        </div>
+        <div class="progress-track"><div id="progress-fill" class="progress-fill"></div></div>
+        <div class="quiz-layout">
+          <aside class="quiz-aside">
+            <span class="aside-index">QUESTION</span>
+            <span id="aside-number" class="aside-big-number">01</span>
+            <p>Réfléchissez à chaque proposition avant de valider votre choix.</p>
+            <span class="aside-bottom">WORLD FOOD DAY <span>·</span> QUIZ</span>
+          </aside>
+          <div class="question-panel">
+            <p id="question-category" class="question-category">CONNAISSANCES GÉNÉRALES</p>
+            <h2 id="question-text">La question apparaîtra ici.</h2>
+            <p class="select-hint">Sélectionnez une seule réponse.</p>
+            <div id="answers-list" class="answers-list"></div>
+            <div class="quiz-actions">
+              <button id="previous-btn" class="button button-quiet" type="button">← Précédent</button>
+              <button id="next-btn" class="button button-primary" type="button" disabled>Question suivante <span aria-hidden="true">→</span></button>
+            </div>
+            <p id="quiz-error" class="form-error" role="alert"></p>
+          </div>
+        </div>
+      </section>
+
+      
+
+      <section id="results-screen" class="results-screen screen hidden">
+        <div class="results-topline">
+          <p class="eyebrow"><span class="eyebrow-line"></span> VOTRE BILAN</p>
+          <span id="save-status" class="save-status">Résultat calculé</span>
+        </div>
+        <div class="results-hero">
+          <div>
+            <p id="result-greeting" class="result-greeting">Merci pour votre participation.</p>
+            <h2 id="result-title">Votre curiosité<br>fait la différence.</h2>
+            <p id="result-description" class="hero-description">Découvrez votre résultat et les explications.</p>
+          </div>
+          <div class="score-circle" aria-label="Score final">
+            <span id="score-value" class="score-value">0/10</span>
+            <span id="score-percent" class="score-percent">0 %</span>
+          </div>
+        </div>
+        <div class="result-stats">
+          <div><span id="correct-count" class="stat-value">0</span><span class="stat-label">Réponses correctes</span></div>
+          <div><span id="incorrect-count" class="stat-value">0</span><span class="stat-label">À revoir</span></div>
+          <div><span id="elapsed-time" class="stat-value">—</span><span class="stat-label">Temps écoulé</span></div>
+        </div>
+        <div class="correction-heading">
+          <div><p class="eyebrow">POUR ALLER PLUS LOIN</p><h3>La correction détaillée</h3></div>
+          <span class="correction-count">10 QUESTIONS</span>
+        </div>
+        <div id="corrections-list" class="corrections-list"></div>
+        <div class="results-actions">
+          <button id="restart-btn" class="button button-primary">Recommencer <span aria-hidden="true">↻</span></button>
+          <button id="retry-save-btn" class="button button-quiet hidden" type="button">Réessayer l’enregistrement</button>
+          <button id="print-btn" class="button button-quiet">Imprimer / PDF <span aria-hidden="true">↗</span></button>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <span>WORLD FOOD DAY <span class="footer-dot">·</span> QUIZ</span>
+      <span>Comprendre aujourd’hui. Agir demain.</span>
+    </footer>
+  </div>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+</body>
+</html>
